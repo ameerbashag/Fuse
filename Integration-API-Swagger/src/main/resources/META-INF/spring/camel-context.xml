@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camel="http://camel.apache.org/schema/spring"
+	xmlns:cxf="http://camel.apache.org/schema/cxf" xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+       http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
+       http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd">
+
+	<bean id="swaggerService" class="com.eai.integration.swagger.SwaggerResource" />
+	<bean id="originFilter" class="com.eai.integration.swagger.ApiOriginFilter" />
+	<bean id="jsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider" />
+	
+	<!-- CXF Swagger2Feature -->
+	<bean id="swagger2Feature" class="org.apache.cxf.jaxrs.swagger.Swagger2Feature">
+		<!-- customize some of the properties -->
+		<property name="host" value="localhost:8181" />
+		<property name="resourcePackage" value="com.eai.integration.swagger" />
+		<property name="version" value="1.0" />
+		<property name="basePath" value="/api/helloWorld" />
+		<property name="title" value="Swagger UI for HelloWorld API" />
+		<property name="description"
+			value="Swagger UI Integration Sample for demonstrating HelloWorld API." />
+		<property name="contact" value="ameerg.eai@gmail.com" />
+		<property name="scan" value="true" />
+	</bean> 
+	
+	<jaxrs:server id="swaggerServiceURL" address="/helloWorld">
+		<jaxrs:serviceBeans>
+			<ref bean="swaggerService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:features>
+			<ref bean="swagger2Feature" />
+		</jaxrs:features>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="originFilter" />
+		</jaxrs:providers>
+	</jaxrs:server> 
+</beans>
